@@ -1,5 +1,6 @@
 import { AxiosResponse } from "axios";
 import BaseApiService from "./BaseApiService";
+import handleResponseApi from "../handleResponseApi/handleResponseApi";
 
 export interface Category {
     id: number;
@@ -10,7 +11,7 @@ export interface Category {
 }
 
 interface CategoryQueryParams {
-    keySearch: string;
+    key_search: string;
     status: number;
     page: number;
     limit: number;
@@ -38,35 +39,49 @@ class CategoryApi extends BaseApiService {
         try {
             const response: AxiosResponse<ApiResponse<CategoryListResponse>> = await this.api.get("/category", {
                 params: {
-                    key_search: params.keySearch,
+                    key_search: params.key_search,
                     status: params.status,
                     page: params.page,
                     limit: params.limit
                 }
             });
+            handleResponseApi.handleResponse(response);
             return response.data;
         } catch (error) {
-            throw error;
+            throw new Error(error.message);
+        }
+    }
+
+    // Get all categories for dropdowns
+    async getAll(): Promise<ApiResponse<Category[]>> {
+        try {
+            const response: AxiosResponse<ApiResponse<Category[]>> = await this.api.get("/category/all");
+            handleResponseApi.handleResponse(response);
+            return response.data;
+        } catch (error) {
+            throw new Error(error.message);
         }
     }
 
     // Fetch a single category by ID
     async findOne(id: number): Promise<ApiResponse<Category>> {
         try {
-            const response: AxiosResponse<ApiResponse<Category>> = await this.api.get(`/category/${id}`);
+            const response: AxiosResponse<ApiResponse<Category>> = await this.api.get(`/category/${id}`);   
+            handleResponseApi.handleResponse(response);
             return response.data;
         } catch (error) {
-            throw error;
+            throw new Error(error.message);
         }
     }
 
     // Change category status (active/inactive)
     async changeStatus(id: number): Promise<ApiResponse<Category>> {
         try {
-            const response: AxiosResponse<ApiResponse<Category>> = await this.api.post(`/category/${id}/change-status`);
+            const response: AxiosResponse<ApiResponse<Category>> = await this.api.post(`/category/${id}/change-status`);    
+            handleResponseApi.handleResponse(response);
             return response.data;
         } catch (error) {
-            throw error;
+            throw new Error(error.message);
         }
     }
 
@@ -74,9 +89,10 @@ class CategoryApi extends BaseApiService {
     async create(category: Omit<Category, 'id'>): Promise<ApiResponse<Category>> {
         try {
             const response: AxiosResponse<ApiResponse<Category>> = await this.api.post("/category/create", category);
+            handleResponseApi.handleResponse(response);
             return response.data;
         } catch (error) {
-            throw error;
+            throw new Error(error.message);
         }
     }
 
@@ -84,9 +100,10 @@ class CategoryApi extends BaseApiService {
     async update(id: number, category: Partial<Category>): Promise<ApiResponse<Category>> {
         try {
             const response: AxiosResponse<ApiResponse<Category>> = await this.api.post(`/category/${id}/update`, category);
+            handleResponseApi.handleResponse(response);
             return response.data;
         } catch (error) {
-            throw error;
+            throw new Error(error.message);
         }
     }
 
@@ -94,9 +111,10 @@ class CategoryApi extends BaseApiService {
     async getByParentId(parentId: number): Promise<ApiResponse<Category[]>> {
         try {
             const response: AxiosResponse<ApiResponse<Category[]>> = await this.api.get(`/category/parent/${parentId}`);
+            handleResponseApi.handleResponse(response);
             return response.data;
         } catch (error) {
-            throw error;
+            throw new Error(error.message);
         }
     }
 }
